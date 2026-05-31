@@ -1,0 +1,262 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}MediLink — Digital Hospital Management System{% endblock %}</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><rect width='200' height='200' rx='40' fill='%230F6E56'/><rect x='70' y='40' width='60' height='120' rx='8' fill='white'/><rect x='30' y='80' width='140' height='40' rx='8' fill='white'/></svg>">
+{% block extra_css %}{% endblock %}
+<link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@700&display=swap" rel="stylesheet">
+
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+</head>
+<body>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <div class="t-ic"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+  <span id="toast-msg"></span>
+</div>
+
+<!-- DOCTOR MODAL -->
+<div class="modal-ov" id="docModal">
+  <div class="modal">
+    <button class="m-close" onclick="closeModal()">&#10005;</button>
+    <div class="m-av" id="mAv"></div>
+    <h3 id="mName"></h3>
+    <div class="m-sp" id="mSp"></div>
+    <div id="mDets"></div>
+    <div class="m-btns">
+      <button onclick="bookFromModal()" style="background:var(--teal);color:#fff">Book Appointment</button>
+      <button onclick="closeModal()" style="background:var(--gray-l);color:var(--dark);border:1px solid var(--gray-m)">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM OVERLAY -->
+<div class="conf-ov" id="confOv">
+  <div class="conf-box">
+    <div class="conf-ic">&#x2705;</div>
+    <h3>Appointment Confirmed!</h3>
+    <p id="confMsg"></p>
+    <button onclick="closeConf()">Done &mdash; Thank You!</button>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav id="mainNav">
+  <div class="nav-inner">
+    <a href="#hero" class="brand">
+      <div class="brand-icon">
+        <svg width="24" height="24" viewBox="0 0 200 200">
+          <rect width="200" height="200" rx="40" fill="#0F6E56"/>
+          <rect x="70" y="40" width="60" height="120" rx="8" fill="white"/>
+          <rect x="30" y="80" width="140" height="40" rx="8" fill="white"/>
+          <polyline points="18,170 38,170 55,135 75,205 95,115 115,185 132,155 152,155" fill="none" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <span class="brand-name">MediLink</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#hero"     class="nav-link active">Home</a></li>
+      <li><a href="#doctors"  class="nav-link">Find Doctor</a></li>
+      <li><a href="#patient"  class="nav-link">Book Appointment</a></li>
+      <li><a href="#about"    class="nav-link">About</a></li>
+      <li><a href="#patient"  class="nav-link nav-cta">Get Started</a></li>
+    </ul>
+    <button class="nav-toggle" id="navToggle" onclick="toggleNav()">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ===== LIVE HOSPITAL MAP SECTION ===== -->
+<section id="map-section" style="width:100%;background:#f0f7f5;padding:2.5rem 0 0 0;">
+  <div style="max-width:1200px;margin:0 auto;padding:0 2rem;">
+
+    <!-- Section Header -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;flex-wrap:wrap;gap:1rem;">
+      <div>
+        <h2 style="font-family:'Playfair Display',serif;color:#0F6E56;font-size:1.7rem;margin:0 0 .3rem 0;">
+          🏥 Hospitals Near You
+        </h2>
+        <p style="color:#555;font-size:.95rem;margin:0;">
+          Live map showing major hospitals across Lahore, Pakistan
+        </p>
+      </div>
+      <span style="background:#0F6E56;color:white;padding:.4rem 1rem;border-radius:999px;font-size:.82rem;font-weight:600;display:flex;align-items:center;gap:.4rem;">
+        <span style="width:8px;height:8px;background:#7fffd4;border-radius:50%;display:inline-block;animation:pulse 1.5s infinite;"></span>
+        Lahore, Pakistan — Live
+      </span>
+    </div>
+
+    <!-- Map Container -->
+    <div id="lahore-hospital-map" style="width:100%;height:420px;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(15,110,86,.13);border:2px solid #c8e6df;"></div>
+
+    <!-- Legend -->
+    <div style="display:flex;align-items:center;gap:1.5rem;padding:.9rem 0 1.5rem 0;flex-wrap:wrap;">
+      <div style="display:flex;align-items:center;gap:.5rem;font-size:.85rem;color:#444;">
+        <div style="background:#0F6E56;color:white;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;">✚</div>
+        <span>Hospital Location (click for details)</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:.5rem;font-size:.85rem;color:#444;">
+        <div style="background:#e74c3c;color:white;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:13px;">📍</div>
+        <span>Your Location</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Pulse animation -->
+<style>
+  @keyframes pulse {
+    0%,100% { opacity:1; transform:scale(1); }
+    50%      { opacity:.5; transform:scale(1.4); }
+  }
+</style>
+
+{% block content %}{% endblock %}
+
+<!-- FOOTER -->
+<footer>
+  <div class="ft-in">
+    <div class="ft-top">
+      <div class="ft-brand">
+        <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.8rem">
+          <div class="brand-icon">
+            <svg width="18" height="18" viewBox="0 0 200 200">
+              <rect width="200" height="200" rx="40" fill="#0F6E56"/>
+              <rect x="70" y="40" width="60" height="120" rx="8" fill="white"/>
+              <rect x="30" y="80" width="140" height="40" rx="8" fill="white"/>
+              <polyline points="18,170 38,170 55,135 75,205 95,115 115,185 132,155 152,155" fill="none" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <span class="ft-brand-name">MediLink</span>
+        </div>
+        <p>Digital Hospital Management System. Making healthcare smarter and more accessible in Lahore, Pakistan.</p>
+      </div>
+      <div class="ft-col">
+        <h4>Modules</h4>
+        <a href="#doctors">Doctor Module</a>
+        <a href="#patient">Patient Module</a>
+        <a href="#features">Features</a>
+        <a href="#about">About</a>
+      </div>
+      <div class="ft-col">
+        <h4>Technologies</h4>
+        <a href="#">HTML &amp; CSS</a>
+        <a href="#">JavaScript</a>
+        <a href="#">Python &amp; Django</a>
+        <a href="#">SQLite Database</a>
+      </div>
+    </div>
+    <div class="ft-bot">
+      <p>&copy; 2025 MediLink &mdash; Digital Hospital Management System &bull; Lahore, Pakistan</p>
+      <p>Built by Anas Fahim</p>
+    </div>
+  </div>
+</footer>
+
+<script src="{% static 'js/main.js' %}"></script>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<!-- Hospital Map Script -->
+<script>
+  const map = L.map('lahore-hospital-map', {
+    zoomControl: true,
+    scrollWheelZoom: false
+  }).setView([31.5204, 74.3587], 12);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    maxZoom: 19
+  }).addTo(map);
+
+  // Hospital data — Lahore
+  const hospitals = [
+    { name: "Mayo Hospital",             lat: 31.5652, lng: 74.3148, type: "Government",  beds: 2000, emergency: true  },
+    { name: "Services Hospital",         lat: 31.5122, lng: 74.3292, type: "Government",  beds: 1500, emergency: true  },
+    { name: "Jinnah Hospital",           lat: 31.4678, lng: 74.2800, type: "Government",  beds: 1800, emergency: true  },
+    { name: "General Hospital Lahore",   lat: 31.5560, lng: 74.3102, type: "Government",  beds: 1200, emergency: true  },
+    { name: "Sheikh Zayed Hospital",     lat: 31.4697, lng: 74.2791, type: "Government",  beds: 700,  emergency: true  },
+    { name: "Children's Hospital",       lat: 31.5643, lng: 74.3176, type: "Specialized", beds: 900,  emergency: true  },
+    { name: "Sir Ganga Ram Hospital",    lat: 31.5490, lng: 74.3344, type: "Government",  beds: 600,  emergency: false },
+    { name: "Ittefaq Hospital",          lat: 31.5020, lng: 74.3430, type: "Private",     beds: 350,  emergency: true  },
+    { name: "Doctors Hospital",          lat: 31.4688, lng: 74.2689, type: "Private",     beds: 400,  emergency: true  },
+    { name: "Hameed Latif Hospital",     lat: 31.5080, lng: 74.3500, type: "Private",     beds: 250,  emergency: true  },
+    { name: "Shaukat Khanum Hospital",   lat: 31.4730, lng: 74.2620, type: "Specialized", beds: 500,  emergency: true  },
+    { name: "Lahore General Hospital",   lat: 31.5204, lng: 74.3587, type: "Government",  beds: 1000, emergency: true  },
+    { name: "National Hospital",         lat: 31.5310, lng: 74.3720, type: "Private",     beds: 200,  emergency: false },
+    { name: "Farooq Hospital",           lat: 31.4900, lng: 74.3200, type: "Private",     beds: 180,  emergency: true  },
+    { name: "Chaudhry Muhammad Akram Teaching & Research Hospital", lat: 31.4560, lng: 74.2750, type: "Teaching", beds: 600, emergency: true },
+  ];
+
+  // Custom hospital marker
+  const hospitalIcon = L.divIcon({
+    html: `<div style="background:#0F6E56;color:white;border-radius:50%;width:34px;height:34px;
+           display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;
+           border:2.5px solid white;box-shadow:0 3px 10px rgba(0,0,0,.25);cursor:pointer;">✚</div>`,
+    className: '',
+    iconSize: [34, 34],
+    iconAnchor: [17, 17],
+    popupAnchor: [0, -20]
+  });
+
+  // Add hospital markers
+  hospitals.forEach(h => {
+    L.marker([h.lat, h.lng], { icon: hospitalIcon })
+      .addTo(map)
+      .bindPopup(`
+        <div style="font-family:'DM Sans',sans-serif;min-width:190px;">
+          <div style="background:#0F6E56;color:white;padding:.5rem .8rem;margin:-.5rem -.7rem .6rem -.7rem;border-radius:6px 6px 0 0;font-weight:600;font-size:.95rem;">
+            🏥 ${h.name}
+          </div>
+          <div style="font-size:.85rem;color:#333;line-height:1.7;">
+            <div>📍 <strong>Lahore, Pakistan</strong></div>
+            <div>🏷️ Type: <strong>${h.type}</strong></div>
+            <div>🛏️ Beds: <strong>${h.beds}+</strong></div>
+            <div>🚨 Emergency: <strong style="color:${h.emergency ? '#0F6E56' : '#e74c3c'}">${h.emergency ? 'Available ✓' : 'Not Available'}</strong></div>
+          </div>
+          <a href="#patient" style="display:block;margin-top:.7rem;background:#0F6E56;color:white;
+             text-align:center;padding:.4rem;border-radius:6px;text-decoration:none;font-size:.82rem;font-weight:600;">
+            Book Appointment →
+          </a>
+        </div>
+      `, { maxWidth: 240 });
+  });
+
+  // Show user's live location
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(pos => {
+      const userLat = pos.coords.latitude;
+      const userLng = pos.coords.longitude;
+
+      const userIcon = L.divIcon({
+        html: `<div style="background:#e74c3c;color:white;border-radius:50%;width:34px;height:34px;
+               display:flex;align-items:center;justify-content:center;font-size:18px;
+               border:2.5px solid white;box-shadow:0 3px 10px rgba(0,0,0,.3);">📍</div>`,
+        className: '',
+        iconSize: [34, 34],
+        iconAnchor: [17, 17]
+      });
+
+      L.marker([userLat, userLng], { icon: userIcon })
+        .addTo(map)
+        .bindPopup('<strong>📍 You are here</strong>')
+        .openPopup();
+    }, () => {
+      console.log('Location access denied — showing Lahore map.');
+    });
+  }
+</script>
+
+{% block extra_js %}{% endblock %}
+</body>
+</html>

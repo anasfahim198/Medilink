@@ -1,0 +1,231 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}MediLink — Find Doctors in Lahore{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-badge"><span class="dot"></span> Lahore, Pakistan &mdash; Version 1.0</div>
+      <h1 style="font-family: 'Noto Nastaliq Urdu', serif; direction: rtl; text-align: right;">آپ کی صحت،<br>ہماری <span>ترجیح</span></h1>
+      <p class="hero-desc">
+        MediLink connects patients with the right doctors in Lahore &mdash; instantly.
+        Describe your disease, get a doctor recommendation, and book your appointment online in seconds.
+      </p>
+      <div class="hero-btns">
+        <a href="#doctors" class="btn btn-p">
+          <svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          Find a Doctor
+        </a>
+        <a href="#patient" class="btn btn-o">Book Appointment</a>
+      </div>
+      <div class="hero-stats">
+        <div><div class="stat-num">{{ doctors|length }}+</div><div class="stat-lbl">Doctors</div></div>
+        <div><div class="stat-num">5</div><div class="stat-lbl">Specializations</div></div>
+        <div><div class="stat-num">2</div><div class="stat-lbl">Modules</div></div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="big-card">
+        <div class="bc-head">
+          <div class="bc-av">AR</div>
+          <div>
+            <div class="bc-title">Dr. Ahmed Raza</div>
+            <div class="bc-sub">Cardiologist &bull; DHA, Lahore</div>
+          </div>
+        </div>
+        <div class="bc-row"><span class="bc-k">Experience</span><span class="bc-v">12 Years</span></div>
+        <div class="bc-row"><span class="bc-k">Availability</span><span class="bc-v">Mon&ndash;Fri, 9AM&ndash;5PM</span></div>
+        <div class="bc-row"><span class="bc-k">Status</span><span class="badge badge-g">Available</span></div>
+        <div class="bc-row"><span class="bc-k">Rating</span><span class="bc-v">&#9733; 4.9 / 5</span></div>
+      </div>
+      <div class="float-card">
+        <div class="fc-lbl">Today&#39;s Appointments</div>
+        <div class="fc-val">24 Booked</div>
+      </div>
+      <div class="float-card">
+        <div class="fc-lbl">AI Matched Instantly</div>
+        <div class="fc-val">&#x2705; Smart Match</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section feat-bg" id="features">
+  <div class="sec-in">
+    <div class="sec-hd">
+      <div class="sec-tag">Why MediLink</div>
+      <h2 class="sec-title">Healthcare Made Simple</h2>
+      <p class="sec-desc">MediLink solves the biggest problems patients face when looking for the right doctor in Lahore.</p>
+    </div>
+    <div class="feat-grid">
+      <div class="feat-card">
+        <div class="feat-ic"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+        <h3>Smart Doctor Search</h3>
+        <p>Describe your symptoms and MediLink automatically recommends the best doctor for your specific health problem.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-ic"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+        <h3>Complete Doctor Profiles</h3>
+        <p>See each doctor&rsquo;s specialization, years of experience, clinic location, and availability before booking.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-ic"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+        <h3>Instant Online Booking</h3>
+        <p>Book appointments online in seconds. No waiting, no phone calls, no travelling to the clinic first.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-ic"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <h3>Secure Patient Data</h3>
+        <p>All your personal and medical information is stored securely &mdash; no more paper records that get lost.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DOCTOR MODULE -->
+<section class="section" id="doctors">
+  <div class="sec-in">
+    <div class="sec-hd">
+      <div class="sec-tag">Doctor Module</div>
+      <h2 class="sec-title">Find Your Doctor</h2>
+      <p class="sec-desc">Browse all available doctors in Lahore. Filter by specialization or search by name.</p>
+    </div>
+    <div class="srch-wrap">
+      <div class="srch-in">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="srchInput" placeholder="Search doctor name, location...">
+      </div>
+      <select class="filt-sel" id="filtSpec">
+        <option value="">All Specializations</option>
+        <option value="Cardiologist">&#10084;&#65039; Cardiologist</option>
+        <option value="Dermatologist">&#129332; Dermatologist</option>
+        <option value="General Physician">&#128104;&#8205;&#9877;&#65039; General Physician</option>
+        <option value="Orthopedic">&#129460; Orthopedic</option>
+        <option value="Eye Specialist">&#128065;&#65039; Eye Specialist</option>
+      </select>
+    </div>
+    <div class="docs-grid" id="docsGrid"></div>
+  </div>
+</section>
+
+<!-- PATIENT MODULE -->
+<section class="section pat-bg" id="patient">
+  <div class="sec-in">
+    <div class="sec-hd">
+      <div class="sec-tag">Patient Module</div>
+      <h2 class="sec-title">Book Your Appointment</h2>
+      <p class="sec-desc">Fill in your details and describe your health problem &mdash; we&rsquo;ll find the best doctor for you automatically.</p>
+    </div>
+    <div class="pat-wrap">
+      <div class="pat-info">
+        <h3>How Does MediLink Recommend a Doctor?</h3>
+        <p>Our smart system reads your disease description and matches it with the best doctor available in Lahore based on specialization and years of experience.</p>
+        <div style="margin-top:1.5rem">
+          <div style="font-size:.82rem;font-weight:600;color:var(--dark);text-transform:uppercase;letter-spacing:.07em;margin-bottom:1.2rem">Step by Step</div>
+          <div class="step-item"><div class="step-num">1</div><div class="step-txt"><strong>Fill the form</strong> &mdash; Enter your name, CNIC, contact details, and describe your health problem.</div></div>
+          <div class="step-item"><div class="step-num">2</div><div class="step-txt"><strong>System reads keywords</strong> &mdash; MediLink finds keywords like &ldquo;chest pain&rdquo; or &ldquo;skin rash&rdquo; in your description.</div></div>
+          <div class="step-item"><div class="step-num">3</div><div class="step-txt"><strong>Doctor is matched</strong> &mdash; Filters doctors in Lahore by specialization and sorts by most experience first.</div></div>
+          <div class="step-item"><div class="step-num">4</div><div class="step-txt"><strong>You confirm</strong> &mdash; See the recommended doctor&rsquo;s profile and confirm your appointment.</div></div>
+        </div>
+        <div style="margin-top:2rem;background:#fff;border-radius:16px;padding:1.5rem;border:1px solid var(--gray-m)">
+          <div style="font-size:.82rem;font-weight:600;color:var(--dark);margin-bottom:1rem">Real-Life Examples</div>
+          <div style="font-size:.83rem;color:var(--gray);line-height:2">
+            &#x1F534; &ldquo;Chest pain&rdquo; &rarr; <strong style="color:var(--teal)">Cardiologist</strong><br>
+            &#x1F7E1; &ldquo;Skin rash&rdquo; &rarr; <strong style="color:var(--teal)">Dermatologist</strong><br>
+            &#x1F7E2; &ldquo;High fever&rdquo; &rarr; <strong style="color:var(--teal)">General Physician</strong><br>
+            &#x1F535; &ldquo;Knee pain&rdquo; &rarr; <strong style="color:var(--teal)">Orthopedic</strong><br>
+            &#x26AA; &ldquo;Blurry vision&rdquo; &rarr; <strong style="color:var(--teal)">Eye Specialist</strong>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="form-card">
+          <h3>Patient Registration</h3>
+          <p class="fsub">Fields marked with <span style="color:var(--coral)">*</span> are required</p>
+          <div class="form-row">
+            <div class="form-g"><label>Full Name <span>*</span></label><input type="text" id="pName" placeholder="e.g. Anas Fahim "></div>
+            <div class="form-g"><label>CNIC / ID Number <span>*</span></label><input type="text" id="pCnic" placeholder="35201-1234567-1"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-g"><label>Email Address <span>*</span></label><input type="email" id="pEmail" placeholder="your@email.com"></div>
+            <div class="form-g"><label>Phone Number <span>*</span></label><input type="tel" id="pPhone" placeholder="0300-1234567"></div>
+          </div>
+          <div class="form-g">
+            <label>Describe Your Health Problem <span>*</span></label>
+            <textarea id="pDisease" rows="4" placeholder="Example: I have chest pain and shortness of breath for the past 3 days..."></textarea>
+          </div>
+          <button class="form-sub" onclick="submitForm()">
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            Find the Best Doctor for Me
+          </button>
+        </div>
+        <div id="recResult" class="rec-result">
+          <div class="rec-hd">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Best Matched Doctor for Your Condition</span>
+          </div>
+          <div class="rec-body">
+            <div class="rec-di">
+              <div class="rec-av" id="recAv"></div>
+              <div><div class="rec-name" id="recName"></div><div class="rec-spec" id="recSpec"></div></div>
+            </div>
+            <div class="rec-dets" id="recDets"></div>
+            <div class="rec-acts">
+              <button class="rbtn-cf" onclick="confirmAppt()">&#x2705; Confirm Appointment</button>
+              <button class="rbtn-nw" onclick="resetForm()">&#x1F504; Search Again</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="section" id="about">
+  <div class="sec-in">
+    <div class="sec-hd">
+      <div class="sec-tag">About</div>
+      <h2 class="sec-title">About MediLink</h2>
+      <p class="sec-desc">A digital hospital management system built for Lahore, Pakistan &mdash; making healthcare accessible for everyone.</p>
+    </div>
+    <div class="feat-grid">
+      <div class="feat-card">
+        <div class="feat-ic"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <h3>Project Info</h3>
+        <p><strong>MediLink</strong> &mdash; Digital Hospital Management System<br>Version 1.0 &bull; 2025<br>Location: Lahore, Pakistan</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-ic"><svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>
+        <h3>Technologies</h3>
+        <p><strong>Frontend:</strong> HTML, CSS, JavaScript<br><strong>Backend:</strong> Python &amp; Django<br><strong>Database:</strong> SQLite</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-ic"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        <h3>Developers</h3>
+        <p><strong>Anas Fahim</strong> &bull; Comsats University Lahore Campus <br>University Project &bull; 2025</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+        <h3>Development Method</h3>
+        <p>Built using the <strong>Waterfall method</strong> &mdash; planning, design, frontend, backend, integration, and testing completed step by step.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  const docs = JSON.parse('{{ doctors_json|escapejs }}');
+  renderDocs(docs);
+</script>
+{% endblock %}
